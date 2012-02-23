@@ -4,7 +4,6 @@ import static java.math.RoundingMode.CEILING;
 import static java.text.DateFormat.SHORT;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +24,6 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
-import android.text.method.DateTimeKeyListener;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,7 +33,6 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
 	static final int PICK_CONTACT_REQUEST = 0;
-	protected static String SINGLE_LOCATION_UPDATE_ACTION = "com.radioactiveyak.places.SINGLE_LOCATION_UPDATE_ACTION";
 
 	protected PendingIntent singleUpatePI;
 	protected LocationManager locationManager;
@@ -53,6 +50,7 @@ public class MainActivity extends Activity {
 
 		// por si queremos poner algo!
 		text = (TextView) findViewById(R.id.text);
+		text.append("\n");
 
 		// Hook up button presses to the appropriate event handler.
 		((Button) findViewById(R.id.dialButton)).setOnClickListener(mDialListener);
@@ -60,29 +58,34 @@ public class MainActivity extends Activity {
 		((Button) findViewById(R.id.sendButton)).setOnClickListener(mSendListener);
 		((Button) findViewById(R.id.batteryButton)).setOnClickListener(mBatteryListener);
 		((Button) findViewById(R.id.locationButton)).setOnClickListener(mLocationListener);
+		((Button) findViewById(R.id.formButton)).setOnClickListener(mPreferencesForm);
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		text.append(getSharedPreferences("MySamplePreferences", MODE_PRIVATE).getString("txt",
+				"no hay nada!\n"));
+	};
 
 	private void pickContact() {
-		// Create an intent to "pick" a contact, as defined by the content
-		// provider URI
+		// Create an intent to "pick" a contact, as defined by the content provider URI
 		Intent intent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
 		startActivityForResult(intent, PICK_CONTACT_REQUEST);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// If the request went well (OK) and the request was
-		// PICK_CONTACT_REQUEST
+		// If the request went well (OK) and the request was PICK_CONTACT_REQUEST
 		if (resultCode == Activity.RESULT_OK && requestCode == PICK_CONTACT_REQUEST) {
-			// Perform a query to the contact's content provider for the
-			// contact's name
+			// Perform a query to the contact's content provider for the contact's name
 			Cursor cursor = getContentResolver().query(data.getData(),
 					new String[] { Contacts.DISPLAY_NAME }, null, null, null);
 			if (cursor.moveToFirst()) { // True if the cursor is not empty
 				int columnIndex = cursor.getColumnIndex(Contacts.DISPLAY_NAME);
 				String name = cursor.getString(columnIndex);
 				// Do something with the selected contact's name...
-				text.setText("has elegido a " + name);
+				text.append("has elegido a " + name + "\n");
 			}
 		}
 	}
@@ -115,7 +118,7 @@ public class MainActivity extends Activity {
 				if (rawlevel >= 0 && scale > 0) {
 					level = (rawlevel * 100) / scale;
 				}
-				text.setText("Battery Level Remaining: " + level + "%");
+				text.append("Battery Level Remaining: " + level + "%\n");
 			}
 		};
 		IntentFilter batteryLevelFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -133,7 +136,7 @@ public class MainActivity extends Activity {
 		criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_COARSE);
 
-		text.setText("Consulta última localización...\n");
+		text.append("Consulta última localización...\n");
 		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 		List<String> matchingProviders = locationManager.getAllProviders();
 		for (String provider : matchingProviders) {
@@ -210,6 +213,13 @@ public class MainActivity extends Activity {
 	OnClickListener mLocationListener = new OnClickListener() {
 		public void onClick(View v) {
 			location();
+		}
+	};
+
+	OnClickListener mPreferencesForm = new OnClickListener() {
+
+		public void onClick(View v) {
+			startActivity(new Intent(MainActivity.this, PreferencesFormActivity.class));
 		}
 	};
 

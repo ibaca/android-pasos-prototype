@@ -3,7 +3,7 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-
+
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
@@ -13,31 +13,37 @@
         android:background="@android:color/darker_gray"
         android:paddingTop="5dp"
         android:orientation="vertical" >
-
+
+        <Button
+            android:id="@+id/formButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/form_button" />
+
         <Button
             android:id="@+id/locationButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/location_button" />
-
+
         <Button
             android:id="@+id/batteryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/battery_level" />
-
+
         <Button
             android:id="@+id/sendButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/send_something" />
-
+
         <Button
             android:id="@+id/dialButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/dial_phone" />
-
+
         <Button
             android:id="@+id/pickButton"
             android:layout_width="match_parent"
@@ -45,7 +51,7 @@
             android:text="@string/pick_contact" />
 
     </LinearLayout>
-
+
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"

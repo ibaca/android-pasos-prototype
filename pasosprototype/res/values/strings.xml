@@ -8,5 +8,6 @@
     <string name="dial_phone">Dial Phone Number</string>
     <string name="battery_level">Battery Level</string>
     <string name="location_button">Location Button</string>
+    <string name="form_button">Form Button</string>
 
 </resources>
