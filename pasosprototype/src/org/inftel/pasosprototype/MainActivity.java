@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -41,6 +42,7 @@ public class MainActivity extends Activity {
 	protected DateFormat dateFormat = java.text.DateFormat.getDateInstance(SHORT, Locale.FRANCE);
 
 	private TextView text;
+	private ScrollView scroll;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -49,8 +51,9 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.main);
 
 		// por si queremos poner algo!
+		scroll = (ScrollView) findViewById(R.id.scroll);
 		text = (TextView) findViewById(R.id.text);
-		text.append("\n");
+		append(""); // salto line mensaje hello!
 
 		// Hook up button presses to the appropriate event handler.
 		((Button) findViewById(R.id.dialButton)).setOnClickListener(mDialListener);
@@ -64,9 +67,8 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		text.append(getSharedPreferences("MySamplePreferences", MODE_PRIVATE).getString("txt",
-				"no hay nada!")
-				+ "\n");
+		append(getSharedPreferences("MySamplePreferences", MODE_PRIVATE).getString("txt",
+				"no hay nada!"));
 	};
 
 	private void pickContact() {
@@ -86,7 +88,7 @@ public class MainActivity extends Activity {
 				int columnIndex = cursor.getColumnIndex(Contacts.DISPLAY_NAME);
 				String name = cursor.getString(columnIndex);
 				// Do something with the selected contact's name...
-				text.append("has elegido a " + name + "\n");
+				append("has elegido a " + name);
 			}
 		}
 	}
@@ -119,7 +121,7 @@ public class MainActivity extends Activity {
 				if (rawlevel >= 0 && scale > 0) {
 					level = (rawlevel * 100) / scale;
 				}
-				text.append("Battery Level Remaining: " + level + "%\n");
+				append("Battery Level Remaining: " + level + "%");
 			}
 		};
 		IntentFilter batteryLevelFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -137,7 +139,7 @@ public class MainActivity extends Activity {
 		criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_COARSE);
 
-		text.append("Consulta última localización...\n");
+		append("Consulta última localización...");
 		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 		List<String> matchingProviders = locationManager.getAllProviders();
 		for (String provider : matchingProviders) {
@@ -175,16 +177,26 @@ public class MainActivity extends Activity {
 	};
 
 	private void printLocationByType(Location location, String provider, String type) {
-		text.append(type + " location " + provider + ": " + ((location == null) ? "none" : ""));
+		append(type + " location " + provider + ": " + ((location == null) ? "none" : ""));
 		if (location != null) {
 			float accuracy = location.getAccuracy();
 			long time = location.getTime();
-			text.append("\n  accuracy=" + accuracy + ", time=" + dateFormat.format(new Date(time))
+			append("\n  accuracy=" + accuracy + ", time=" + dateFormat.format(new Date(time))
 					+ "\n  lat=" + new BigDecimal(location.getLatitude()).setScale(4, CEILING)
 					+ ", longitude=" + new BigDecimal(location.getLongitude()).setScale(4, CEILING));
 
 		}
+		append("");
+	}
+
+	public void append(CharSequence line) {
+		text.append(line);
 		text.append("\n");
+		scroll.post(new Runnable() {
+			public void run() {
+				scroll.smoothScrollTo(0, text.getBottom());
+			}
+		});
 	}
 
 	OnClickListener mPickListener = new OnClickListener() {
