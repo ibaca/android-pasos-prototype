@@ -1,2 +1,5 @@
 /gen
 /bin
+/.settings
+/.classpath
+/.project
