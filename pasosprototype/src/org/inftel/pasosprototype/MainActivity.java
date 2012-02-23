@@ -60,12 +60,13 @@ public class MainActivity extends Activity {
 		((Button) findViewById(R.id.locationButton)).setOnClickListener(mLocationListener);
 		((Button) findViewById(R.id.formButton)).setOnClickListener(mPreferencesForm);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		text.append(getSharedPreferences("MySamplePreferences", MODE_PRIVATE).getString("txt",
-				"no hay nada!\n"));
+				"no hay nada!")
+				+ "\n");
 	};
 
 	private void pickContact() {
